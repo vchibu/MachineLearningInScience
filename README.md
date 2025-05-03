@@ -1,17 +1,17 @@
 # 🧠 Machine Learning in Science – Final Project Repository
 
-### Group 15 – *The Three Musketeers*
-- Vlad Chibulcutean (1780980)  
-- Andreas Sinharoy (1804987)  
-- Alex Gavriliu (1785060)
+### 👥 Group 15 – *The Three Musketeers*
+- **Vlad Chibulcutean** (1780980)  
+- **Andreas Sinharoy** (1804987)  
+- **Alex Gavriliu** (1785060)
 
 ---
 
-This repository contains the full code, documentation, and reports for the three core assignments completed as part of the **Machine Learning in Science** course at TU Eindhoven. Each assignment is a deep dive into applying machine learning techniques to scientific problems, with an emphasis on physical intuition, symmetry, and model interpretability.
+This repository is the culmination of three core assignments completed as part of the *Machine Learning in Science* course at TU Eindhoven. Each assignment explores the interface between physics and machine learning, with a focus on real-world modelling, mathematical rigour, and interpretability.
 
 ---
 
-## 📂 Repository Structure
+## 📁 Repository Structure
 
 ```text
 Assignment1/
@@ -27,117 +27,164 @@ README.md
 requirements.txt
 ```
 
----
-
-## 📘 Assignment 1: Predicting Wave Speed from Physical Inputs
-
-### 🔍 Problem Statement
-Predict the **speed of water waves** using their **height** and **wavelength** as inputs.
-
-### 🧠 Concepts Used
-- **Dimensional Homogeneity**: using √(gλ) and √(gh) to convert features to units of m/s.
-- **Data Normalization**: all values scaled so the target becomes 1 for consistent training.
-- **Custom Neural Network**: implemented feedforward propagation and backpropagation *from scratch* using NumPy.
-- **Mini-batch Gradient Descent**: manual implementation for training.
-- **Evaluation Metric**: MAPE (Mean Absolute Percentage Error).
+Each folder contains:
+- 📓 A Jupyter Notebook (`.ipynb`) with code, visualizations, and commentary
+- 📑 A detailed PDF report with theoretical derivations, physical justifications, and final results
 
 ---
 
-## 📘 Assignment 2: Symmetry-Aware Learning for Polygon Area Prediction
+## 📘 Assignment 1: Predicting Wave Speed Using Custom Neural Networks
 
-### 🔍 Problem Statement
-Given the **7 side lengths** of a cyclic polygon, predict the **maximum enclosed area**.
+### 🎯 Objective
+Predict the **velocity of water waves** using input parameters: **wave height** and **wavelength**.
 
-### 🧠 Physics and ML Techniques
-- **Dimensional Homogeneity**: normalized inputs and outputs.
-- **Equivariance and Invariance**: sorted side lengths to respect permutation invariance.
-- **Deep Neural Network in PyTorch**: with SELU activations and custom dataset handling.
+### ⚙️ Approach
+- **Dimensional Analysis**:
+  - Applied transformations like √(gλ) and √(gh) to homogenize the physical units.
+- **Normalization**:
+  - Scaled data relative to wave speed (output = 1) to simplify learning.
+- **Manual Network Implementation**:
+  - Implemented a feedforward neural network *entirely from scratch* in NumPy.
+  - Included backpropagation, stochastic gradient descent, weight updates, and batch training.
 
-### 📊 Results
-| Model Variant       | Validation MAPE |
-|---------------------|------------------|
-| Without symmetry fix | ~0.31%           |
-| With symmetry fix    | ~0.08%           |
+### 📊 Evaluation
+- Linear regression proved insufficient due to data curvature.
+- Shallow ReLU network trained with SGD performed significantly better.
+- MAPE used as the core performance metric.
+- Final model exported predictions to CSV for testing.
+
+### 🔍 Notable Insight
+Even basic physics problems can require nonlinear models. Building networks from scratch deepened our understanding of each mathematical step in training.
 
 ---
 
-## 📘 Final Assignment: Symmetry-Aware CNN for Grid-Based Physical Data
+## 📘 Assignment 2: Polygon Area Estimation via Symmetry-Aware Deep Learning
 
-### 🔍 Problem Statement
-Train a **Convolutional Neural Network (CNN)** to predict scalar output from 2D structured physical inputs (e.g., matrices representing fields), incorporating domain **symmetries** into the model pipeline.
+### 🎯 Objective
+Given 7 side lengths of a polygon, estimate the **maximum possible enclosed area** under the assumption that the polygon is cyclic.
 
-### 🧠 Techniques Used
-- **Symmetry-Aware Augmentation**:
-  - 7 learned symmetry transformations: reflections, rotations, diagonal flips.
-  - Wrapped model with `SymmetricModelWrapper` to apply all transformations and average their outputs.
-- **Custom PyTorch CNN**:
-  - Multiple convolutional layers with ReLU and AvgPool.
-  - Compact final fully connected output.
-- **Training Setup**:
-  - Used `.npy` input/output files.
-  - Data split with `train_test_split`.
-  - Optimized using Adam, MSE loss.
+### 🧠 Core Challenges
+- **Permutation Invariance**: Area does not depend on side order.
+- **Dimensional Homogeneity**: Handled via perimeter scaling.
+- **Learning Efficiency**: Sorting side lengths reduced noise from symmetry.
+
+### ⚙️ Technical Highlights
+- Developed a PyTorch deep neural network with:
+  - Multiple hidden layers
+  - SELU activations
+  - Early stopping and MSE loss
+- Created custom `Dataset` and `DataLoader` classes for batched training.
+- Conducted controlled experiments *with and without symmetry disambiguation*.
+
+### 📈 Results
+| Setup                   | MAPE (Validation) |
+|------------------------|-------------------|
+| Raw input (unsorted)   | ~0.31%            |
+| Sorted (symmetry-aware)| ~0.08%            |
+
+### 🔍 Notable Insight
+Incorporating domain knowledge (invariance to permutations) significantly improved accuracy and model convergence.
+
+---
+
+## 📘 Final Assignment: Symmetry-Aware Convolutional Network for Scalar Field Prediction
+
+### 🎯 Objective
+Build a **CNN-based regressor** to predict a **scalar output** from 2D input matrices (e.g., physical simulation fields), while incorporating **rotational and reflectional symmetries**.
+
+### 📊 Dataset
+- Inputs: 2D matrices (from `pub_input.npy`)
+- Targets: Continuous scalar outputs (from `pub_output.npy`)
+- Data split using `train_test_split` with reproducible random seed
+
+### 🧠 Techniques and Architecture
+- **Data Augmentation via Learned Symmetries**:
+  - Reflections over x/y axis
+  - 90°, 180°, 270° rotations
+  - Diagonal and anti-diagonal transpositions
+
+- **SymmetricModelWrapper**:
+  - Wrapped base CNN to apply all 7 transformations
+  - Model averages predictions from each transformation + original input
+  - Improves generalization and mimics physical invariance
+
+- **CNN Architecture**:
+  - 6 Conv2D layers
+  - AvgPooling and ReLU after each block
+  - 1 Dense output for scalar regression
+
+- **Training Pipeline**:
+  - Optimizer: Adam
+  - Loss Function: MSE
+  - Visualization: Scatter plots + learning curves
 
 ### 📈 Key Outcomes
-- Averaging predictions across symmetries reduces overfitting.
-- Incorporating physical symmetries during inference significantly improves generalization.
-- Framework is modular and applicable to many simulation-based tasks.
+- Dramatic performance boost when symmetry enforcement is enabled.
+- Robust predictions on unseen data.
+- Architecture generalizes well to other symmetry-rich physical problems.
+
+### 🔍 Notable Insight
+By encoding physical priors as symmetry transformations, we achieve *both* predictive accuracy and scientific plausibility — a key aspect of trustworthy ML in science.
 
 ---
 
-## ▶️ How to Run the Code
+## ▶️ How to Use This Repository
 
-1. Clone the repository.
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-3. Open any Jupyter Notebook:
-   - `Assignment 1 Code.ipynb`
-   - `Assignment 2 Code.ipynb`
-   - `Final Assignment Code.ipynb`
-4. Run all cells to execute training, evaluation, and visualizations.
-
----
-
-## 🛠️ Requirements
-
-This project uses:
-- Python 3.9+
-- numpy
-- pandas
-- matplotlib
-- seaborn
-- torch
-- scikit-learn
-- tqdm
-- torchsummary
-
-Install with:
+### 💾 Installation
+Install all required packages:
 ```bash
 pip install -r requirements.txt
 ```
 
+### 🚀 Run the Assignments
+Open any of the following notebooks in Jupyter or VS Code:
+- `Assignment 1 Code.ipynb`
+- `Assignment 2 Code.ipynb`
+- `Final Assignment Code.ipynb`
+
+Run all cells to:
+- Preprocess data
+- Train models
+- Visualize results
+- Export predictions (Assignment 1)
+
 ---
 
-## 🧠 Reflections
+## 🧪 Package Requirements
 
-Each assignment tackled a different scientific challenge:
-- **Assignment 1**: Engineering a neural network from scratch using matrix calculus.
-- **Assignment 2**: Exploiting symmetry and dimensional analysis to reduce data redundancy.
-- **Final Assignment**: Using learned data transformations to enforce physical invariances in convolutional architectures.
+```txt
+numpy
+pandas
+matplotlib
+seaborn
+torch
+scikit-learn
+tqdm
+torchsummary
+```
+
+---
+
+## 🧠 Key Learnings
+
+| Assignment        | Focus                                 | Methodology                     |
+|------------------|---------------------------------------|----------------------------------|
+| Assignment 1      | Custom neural networks, physics-based features | Pure NumPy, ReLU, SGD           |
+| Assignment 2      | Symmetry-aware regression, equivariance | PyTorch, data preprocessing     |
+| Final Assignment  | Symmetry enforcement in CNNs         | Transform averaging, CNN stacks |
 
 ---
 
 ## 📜 Acknowledgements
 
-Thanks to the TU Eindhoven instructors for designing a rich, interdisciplinary experience that bridges physics and AI.
+We’re grateful to the ML in Science teaching team at TU Eindhoven for enabling us to explore how machine learning can reveal, replicate, and respect physical structure.
 
+> “In science, there are no shortcuts to truth.” – Karl Popper  
 > “The purpose of computation is insight, not numbers.” – Richard Hamming
 
 ---
 
 ## 📬 Contact
 
-- 🧑‍💻 Vlad: [GitHub](https://github.com/vladc19)
-- 🧑‍🔬 Andreas & Alex: see report footers
+- **Vlad Chibulcutean** – [GitHub](https://github.com/vladc19)  
+- For questions about architecture, training, and physics-based modeling, please refer to our reports or contact team members via academic email.

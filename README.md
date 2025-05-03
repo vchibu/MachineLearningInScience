@@ -5,7 +5,7 @@
 - Alex Gavriliu (1785060)
 
 ---
-This repository contains the full code, documentation, and reports for the three core assignments completed as part of the **Machine Learning in Science** course at TU Delft. Each assignment is a unique deep dive into machine learning applied to physics-inspired problems, showcasing not only technical skills in Python and PyTorch, but also the scientific mindset required to model real-world phenomena.
+This repository contains the full code, documentation, and reports for the three core assignments completed as part of the **Machine Learning in Science** course at TU Eindhoven. Each assignment is a unique deep dive into machine learning applied to physics-inspired problems, showcasing not only technical skills in Python and PyTorch, but also the scientific mindset required to model real-world phenomena.
 
 ## 📂 Repository Structure
 ```text
